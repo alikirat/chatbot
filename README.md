@@ -1,12 +1,40 @@
-# React + Vite
+# Chatbot
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A ChatGPT-style chat UI built with React, Tailwind CSS, and the
+[Groq API](https://groq.com/) (Llama 3.3 70B). Conversations are listed in a
+sidebar and persisted through a backend API.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Send prompts and get streamed-in AI responses (Groq `llama-3.3-70b-versatile`)
+- Sidebar of past conversations — select, create, or delete a chat
+- Chat history persisted via a backend API (create/get/update/delete)
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+React 19, Vite, Tailwind CSS v4, `groq-sdk`, Axios.
+
+## Setup
+
+This app needs two things to run: a Groq API key, and a running backend that
+exposes the chat-persistence routes it calls (`/api/chat`).
+
+1. Get a free API key from [console.groq.com](https://console.groq.com/).
+2. Create a `.env` file in the project root:
+   ```env
+   VITE_GROQ_API_KEY=your-groq-key-here
+   VITE_API_URL=http://localhost:3000
+   ```
+3. Install and run:
+   ```bash
+   npm install
+   npm run dev
+   ```
+
+The app runs on `http://localhost:5173` by default.
+
+## Notes
+
+The Groq client runs directly in the browser (`dangerouslyAllowBrowser: true`),
+which means the API key is exposed client-side — fine for local development,
+but a real deployment should proxy requests through a backend instead.
