@@ -4,6 +4,10 @@ A ChatGPT-style chat UI built with React, Tailwind CSS, and the
 [Groq API](https://groq.com/) (Llama 3.3 70B). Conversations are listed in a
 sidebar and persisted through a backend API.
 
+![Chatbot screenshot](docs/screenshot.png)
+
+**Live demo:** [akdev-chatbot.netlify.app](https://akdev-chatbot.netlify.app)
+
 ## Features
 
 - Send prompts and get streamed-in AI responses (Groq `llama-3.3-70b-versatile`)
