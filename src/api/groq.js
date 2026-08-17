@@ -16,15 +16,16 @@ export async function getChatCompletion(messages) {
     try {
      const completion = await groq.chat.completions.create({
         messages: messages,
-        model: "llama-3.3-70b-versatile"
+        model: "openai/gpt-oss-20b"
     });
-    
+
     if (!completion) {
         throw new Error("Error generating chat completion.");
     }
 
     return completion;
     } catch (e) {
-        console.error(e.message)
+        console.error(e.message);
+        throw e;
     }
 }

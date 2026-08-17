@@ -20,6 +20,7 @@ function App() {
   const [messages, setMessages] = useState([]);
   const [chats, setChats] = useState([]);
   const [currentChatId, setCurrentChatId] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   // Fetch all chats on component mount
   useEffect(() => {
@@ -54,6 +55,7 @@ function App() {
     const newMessages = [...messages, newMessage];
 
     try {
+      setErrorMessage(null);
       // Get AI response
       const completion = await getChatCompletion(newMessages);
       const assistantMessage = {
@@ -80,6 +82,9 @@ function App() {
       setPrompt("");
     } catch (error) {
       console.error("Error processing chat:", error);
+      setErrorMessage(
+        "Something went wrong generating a response. Please try again."
+      );
     }
   };
 
@@ -181,6 +186,9 @@ function App() {
           </div>
         </div>
 
+        {errorMessage && (
+          <p className='text-red-400 text-center px-3'>{errorMessage}</p>
+        )}
         <form
           onSubmit={handleSubmit}
           className='flex justify-between w-full mt-auto p-3'
