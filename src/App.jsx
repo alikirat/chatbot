@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { getChatCompletion } from "./api/groq";
 import { CiUser } from "react-icons/ci";
-import { LuBot } from "react-icons/lu";
+import { LuBot, LuLogOut } from "react-icons/lu";
 import { FaRegPenToSquare } from "react-icons/fa6";
 import { BsWindowSidebar } from "react-icons/bs";
 import {
@@ -11,6 +11,7 @@ import {
   updateChat,
   deleteChat,
 } from "./api/chat";
+import AuthScreen from "./components/AuthScreen";
 
 function App() {
   const promptInputRef = useRef(null); // ref for text input
@@ -21,24 +22,56 @@ function App() {
   const [currentChatId, setCurrentChatId] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    !!localStorage.getItem("token")
+  );
+  const [userEmail, setUserEmail] = useState(
+    localStorage.getItem("userEmail") || ""
+  );
 
-  // Fetch all chats on component mount
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userEmail");
+    setIsAuthenticated(false);
+    setUserEmail("");
+    setChats([]);
+    setMessages([]);
+    setCurrentChatId(null);
+  };
+
+  // If a request comes back unauthorized/forbidden, the token is
+  // missing or expired - send the user back to the login screen.
+  const handleAuthError = (error) => {
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      handleLogout();
+      return true;
+    }
+    return false;
+  };
+
+  // Fetch all chats once authenticated
   useEffect(() => {
+    if (!isAuthenticated) return;
+
     const fetchChats = async () => {
       try {
         const allChats = await getChats();
         setChats(allChats);
       } catch (error) {
-        console.error("Failed to fetch chats:", error);
+        if (!handleAuthError(error)) {
+          console.error("Failed to fetch chats:", error);
+        }
       }
     };
     fetchChats();
-  }, []);
+  }, [isAuthenticated]);
 
-  // Focus on input
+  // Focus on input once the chat UI is actually rendered
   useEffect(() => {
-    promptInputRef.current.focus();
-  }, []);
+    if (isAuthenticated) {
+      promptInputRef.current?.focus();
+    }
+  }, [isAuthenticated]);
 
   /**
    * Handle Form Submit
@@ -56,8 +89,11 @@ function App() {
 
     try {
       setErrorMessage(null);
-      // Get AI response
-      const completion = await getChatCompletion(newMessages);
+      // Get AI response. Strip Mongo-added fields (_id, timeStamp) since
+      // Groq rejects unrecognized properties on message objects.
+      const completion = await getChatCompletion(
+        newMessages.map(({ role, content }) => ({ role, content }))
+      );
       const assistantMessage = {
         role: "assistant",
         content: completion.choices[0].message.content,
@@ -81,10 +117,12 @@ function App() {
       setMessages(updatedMessages);
       setPrompt("");
     } catch (error) {
-      console.error("Error processing chat:", error);
-      setErrorMessage(
-        "Something went wrong generating a response. Please try again."
-      );
+      if (!handleAuthError(error)) {
+        console.error("Error processing chat:", error);
+        setErrorMessage(
+          "Something went wrong generating a response. Please try again."
+        );
+      }
     }
   };
 
@@ -94,7 +132,9 @@ function App() {
       setMessages(chat.messages);
       setCurrentChatId(chatId);
     } catch (error) {
-      console.error("Error loading chat:", error);
+      if (!handleAuthError(error)) {
+        console.error("Error loading chat:", error);
+      }
     }
   };
 
@@ -112,9 +152,18 @@ function App() {
         setCurrentChatId(null);
       }
     } catch (error) {
-      console.error("Error deleting chat:", error);
+      if (!handleAuthError(error)) {
+        console.error("Error deleting chat:", error);
+      }
     }
   };
+
+  if (!isAuthenticated) {
+    return <AuthScreen onAuthenticated={() => {
+      setIsAuthenticated(true);
+      setUserEmail(localStorage.getItem("userEmail") || "");
+    }} />;
+  }
 
   return (
     <main className='flex bg-indigo-900 text-white h-screen'>
@@ -151,11 +200,17 @@ function App() {
               </div>
             ))}
           </div>
-          <div className='flex items-center mb-5 mt-auto'>
-            <CiUser size={32} className='border rounded-full p-1 mr-2' />
-            <h3 className='text-center text-xl font-bold text-orange-500'>
-              User
-            </h3>
+          <div className='flex items-center justify-between mb-5 mt-auto'>
+            <div className='flex items-center gap-2 min-w-0'>
+              <CiUser size={32} className='border rounded-full p-1 shrink-0' />
+              <span className='truncate font-bold text-orange-500'>{userEmail}</span>
+            </div>
+            <LuLogOut
+              size={20}
+              onClick={handleLogout}
+              className='cursor-pointer hover:text-orange-500 shrink-0'
+              title='Log out'
+            />
           </div>
         </section>
       )}
