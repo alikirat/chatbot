@@ -134,7 +134,7 @@ function App() {
             {chats.map((chat) => (
               <div
                 key={chat._id}
-                className={`p-2 border rounded-md mb-2 cursor-pointer hover:bg-neutral-700 flex justify-between items-center
+                className={`group p-2 border rounded-md mb-2 cursor-pointer hover:bg-neutral-700 flex justify-between items-center
                 ${currentChatId === chat._id ? "bg-neutral-700" : ""}`}
                 onClick={() => handleChatSelect(chat._id)}
               >
@@ -144,7 +144,7 @@ function App() {
                     e.stopPropagation();
                     handleDeleteChat(chat._id);
                   }}
-                  className='text-red-500 hover:text-red-700'
+                  className='text-red-500 hover:text-red-700 sm:opacity-0 sm:group-hover:opacity-100 sm:focus:opacity-100 transition-opacity'
                 >
                   ×
                 </button>
