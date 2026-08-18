@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from "react";
 import { getChatCompletion } from "./api/groq";
 import { CiUser } from "react-icons/ci";
 import { LuBot } from "react-icons/lu";
-import { IoIosSearch } from "react-icons/io";
 import { FaRegPenToSquare } from "react-icons/fa6";
 import { BsWindowSidebar } from "react-icons/bs";
 import {
@@ -21,6 +20,7 @@ function App() {
   const [chats, setChats] = useState([]);
   const [currentChatId, setCurrentChatId] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   // Fetch all chats on component mount
   useEffect(() => {
@@ -119,56 +119,57 @@ function App() {
   return (
     <main className='flex bg-indigo-900 text-white h-screen'>
       {/* LEFT CHATS SECTION  */}
-      <section className='flex flex-col flex-1 min-w-0 border p-5 bg-neutral-800'>
-        <div className='flex justify-between items-center mb-5'>
-          <BsWindowSidebar size={24} />
-          <h1 className='text-center text-xl font-bold text-orange-500'>
-            Chatbot
-          </h1>
-          <div className='flex items-center gap-5'>
-            <IoIosSearch size={24} />
+      {isSidebarOpen && (
+        <section className='flex flex-col flex-1 min-w-0 border p-5 bg-neutral-800'>
+          <div className='flex justify-between items-center mb-5'>
+            <h1 className='text-xl font-bold text-orange-500'>Chatbot</h1>
             <FaRegPenToSquare
               size={24}
               onClick={handleNewChat}
               className='cursor-pointer hover:text-orange-500'
             />
           </div>
-        </div>
-        {/* PREVIOUS CHATS */}
-        <div className='flex-1 overflow-y-auto'>
-          {chats.map((chat) => (
-            <div
-              key={chat._id}
-              className={`p-2 border rounded-md mb-2 cursor-pointer hover:bg-neutral-700 flex justify-between items-center
+          {/* PREVIOUS CHATS */}
+          <div className='flex-1 overflow-y-auto'>
+            {chats.map((chat) => (
+              <div
+                key={chat._id}
+                className={`p-2 border rounded-md mb-2 cursor-pointer hover:bg-neutral-700 flex justify-between items-center
                 ${currentChatId === chat._id ? "bg-neutral-700" : ""}`}
-              onClick={() => handleChatSelect(chat._id)}
-            >
-              <span className='truncate'>{chat.title}</span>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDeleteChat(chat._id);
-                }}
-                className='text-red-500 hover:text-red-700'
+                onClick={() => handleChatSelect(chat._id)}
               >
-                ×
-              </button>
-            </div>
-          ))}
-        </div>
-        <div className='flex items-center mb-5 mt-auto'>
-          <CiUser size={32} className='border rounded-full p-1 mr-2' />
-          <h3 className='text-center text-xl font-bold text-orange-500'>
-            User
-          </h3>
-        </div>
-      </section>
+                <span className='truncate'>{chat.title}</span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteChat(chat._id);
+                  }}
+                  className='text-red-500 hover:text-red-700'
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+          <div className='flex items-center mb-5 mt-auto'>
+            <CiUser size={32} className='border rounded-full p-1 mr-2' />
+            <h3 className='text-center text-xl font-bold text-orange-500'>
+              User
+            </h3>
+          </div>
+        </section>
+      )}
 
       {/* RIGHT CHAT SECTION  */}
       <section className='flex flex-col flex-3 min-w-0 border bg-neutral-900'>
-        <h2 className='mb-5 text-center text-xl font-bold bg-neutral-800 p-3 w-full'>
-          Chat
-        </h2>
+        <div className='flex items-center gap-3 mb-5 bg-neutral-800 p-3 w-full'>
+          <BsWindowSidebar
+            size={24}
+            onClick={() => setIsSidebarOpen((prev) => !prev)}
+            className='cursor-pointer hover:text-orange-500 shrink-0'
+          />
+          <h2 className='flex-1 text-center text-xl font-bold'>Chat</h2>
+        </div>
         <div className='p-5'>
           <div className=''>
             {messages.map((message, idx) => {
