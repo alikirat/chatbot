@@ -170,21 +170,39 @@ function App() {
           />
           <h2 className='flex-1 text-center text-xl font-bold'>Chat</h2>
         </div>
-        <div className='p-5'>
-          <div className=''>
-            {messages.map((message, idx) => {
+        <div className='flex-1 overflow-y-auto p-5'>
+          {messages.length === 0 ? (
+            <div className='h-full flex flex-col items-center justify-center text-neutral-500 text-center'>
+              <LuBot size={40} />
+              <p className='mt-3'>Start a conversation by sending a message below.</p>
+            </div>
+          ) : (
+            messages.map((message, idx) => {
+              const isUser = message.role === "user";
               return (
-                <div key={idx} className='flex items-center mb-5'>
-                  {message.role === "user" ? (
-                    <CiUser size={32} className='border rounded-full p-1' />
-                  ) : (
-                    <LuBot size={32} className='border rounded-full p-1' />
+                <div
+                  key={idx}
+                  className={`flex items-start gap-2 mb-4 ${
+                    isUser ? "justify-end" : "justify-start"
+                  }`}
+                >
+                  {!isUser && (
+                    <LuBot size={32} className='border rounded-full p-1 shrink-0' />
                   )}
-                  <div className='ml-2 min-w-0 break-words'>{message.content}</div>
+                  <div
+                    className={`min-w-0 break-words rounded-2xl px-4 py-2 max-w-[75%] ${
+                      isUser ? "bg-orange-600" : "bg-neutral-800"
+                    }`}
+                  >
+                    {message.content}
+                  </div>
+                  {isUser && (
+                    <CiUser size={32} className='border rounded-full p-1 shrink-0' />
+                  )}
                 </div>
               );
-            })}
-          </div>
+            })
+          )}
         </div>
 
         {errorMessage && (
