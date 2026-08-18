@@ -5,6 +5,7 @@ A ChatGPT-style chat UI built with React, Tailwind CSS, and the
 user account and persisted through a backend API.
 
 ![Chatbot screenshot](docs/screenshot.png)
+![Chatbot login screen](docs/screenshot-login.png)
 
 **Live demo:** [akdev-chatbot.netlify.app](https://akdev-chatbot.netlify.app)
 
