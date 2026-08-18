@@ -221,10 +221,12 @@ function App() {
             onChange={(e) => setPrompt(e.target.value)}
             required
           />
-          <input
+          <button
             type='submit'
-            className='ml-2 border p-2 rounded-lg hover:bg-orange-500 hover:text-bold hover:cursor-pointer'
-          />
+            className='ml-2 px-4 py-2 rounded-lg bg-orange-600 font-semibold cursor-pointer hover:bg-orange-700 transition-colors'
+          >
+            Send
+          </button>
         </form>
         <i className='text-center'>
           Chatbot can make mistakes. Check important info.
