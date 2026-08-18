@@ -119,7 +119,7 @@ function App() {
   return (
     <main className='flex bg-indigo-900 text-white h-screen'>
       {/* LEFT CHATS SECTION  */}
-      <section className='flex flex-col flex-1 border p-5 bg-neutral-800'>
+      <section className='flex flex-col flex-1 min-w-0 border p-5 bg-neutral-800'>
         <div className='flex justify-between items-center mb-5'>
           <BsWindowSidebar size={24} />
           <h1 className='text-center text-xl font-bold text-orange-500'>
@@ -165,7 +165,7 @@ function App() {
       </section>
 
       {/* RIGHT CHAT SECTION  */}
-      <section className='flex flex-col flex-3 border bg-neutral-900'>
+      <section className='flex flex-col flex-3 min-w-0 border bg-neutral-900'>
         <h2 className='mb-5 text-center text-xl font-bold bg-neutral-800 p-3 w-full'>
           Chat
         </h2>
@@ -179,7 +179,7 @@ function App() {
                   ) : (
                     <LuBot size={32} className='border rounded-full p-1' />
                   )}
-                  <div className='ml-2'>{message.content}</div>
+                  <div className='ml-2 min-w-0 break-words'>{message.content}</div>
                 </div>
               );
             })}
