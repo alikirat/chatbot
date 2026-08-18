@@ -7,6 +7,17 @@ function authHeaders() {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
+// Get an AI completion, proxied through the backend so the Groq API key
+// never has to reach the browser
+export async function getChatCompletion(messages) {
+  const res = await axios.post(
+    `${API_URL}/api/chat/completion`,
+    { messages },
+    { headers: authHeaders() }
+  );
+  return res.data;
+}
+
 // Create a new chat
 export async function createChat(messages, title) {
   const res = await axios.post(

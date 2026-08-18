@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from "react";
-import { getChatCompletion } from "./api/groq";
 import { CiUser } from "react-icons/ci";
 import { LuBot, LuLogOut } from "react-icons/lu";
 import { FaRegPenToSquare } from "react-icons/fa6";
 import { BsWindowSidebar } from "react-icons/bs";
 import {
+  getChatCompletion,
   getChats,
   getChat,
   createChat,
